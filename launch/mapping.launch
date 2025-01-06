@@ -1,0 +1,15 @@
+<launch>
+    <param name="use_sim_time" value="true" />
+
+    <node name="RLML_node" pkg="RLML" type="RLML_node" output="screen" launch-prefix="gnome-terminal -- bash -c"  >
+        <rosparam file="$(find RLML)/param/config.yaml" command="load" />
+        <param name="mapping" value="true" />
+        <param name="use_reflector" value="true" />
+        <param name="save_path" value="$(find RLML)/log/map/" />
+        <param name="load_path" value="$(find RLML)/log/map/" />
+        <param name="log_path" value="$(find RLML)/log/log.txt" />
+        <param name="err_path" value="$(find RLML)/log/err.txt" />
+    </node>
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find RLML)/rviz/demo.rviz" output="screen" />
+</launch>
