@@ -8,6 +8,8 @@ Key features of the project include:
 - **Relocalization** using the generated map
 - **Real-time localization**, with **odometry smoothing** to provide a stable trajectory for more reliable control
 
+If you are interested in the theory and derivation, please refer to RLML_derivation.pdf
+
 ---
 ## Demo data
 Download the demo data in the following link:
