@@ -67,9 +67,22 @@ After the data finishes playing, type `q`  and press Enter in the pop out window
 
 ---
 
+## TODO List
+
+- [ ] Add support for ROS2
+- [ ] Add a docker support
+
+
+## Acknowledgements
+
+This project was inspired by the following open-source projects:
+
+- [g2o](https://github.com/RainerKuemmerle/g2o): A General Framework for Graph Optimization.
+- [ares_slam](https://github.com/ningwang1028/ares_slam): A LiDAR-based SLAM system.
 
 ## License
 This project is licensed under the **MIT License** .
 For more details, see the [LICENSE]()  file.
 
 ---
+
