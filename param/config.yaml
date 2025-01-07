@@ -14,6 +14,7 @@ scan_topic: scan
 odom_topic: odom
 map_topic: map
 
+lidar_frame: sensor_Link
 base_frame: base_footprint
 map_frame: map
 

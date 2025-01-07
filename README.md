@@ -8,7 +8,6 @@ Key features of the project include:
 - **Relocalization** using the generated map
 - **Real-time localization**, with **odometry smoothing** to provide a stable trajectory for more reliable control
 
-If you are interested in the theory and derivation, please refer to RLML_derivation.pdf
 
 ---
 ## Demo data
@@ -52,7 +51,10 @@ Download the **demo dataset**  from the provided link and run:
 ```bash
 rosbag play --clock mapping.bag
 ```
-Once the data finishes playing, type `s`  and press Enter in the pop out window of `mapping.launch` to save the map.
+![Mapping Demo](pics/mapping.gif)
+The blue rectangles represent the reflective markers. Once the data finishes playing, type `s`  and press Enter in the pop out window of `mapping.launch` to save the map.
+
+
 ### 5. Run Localization
 
 
@@ -65,9 +67,17 @@ Download the **demo dataset**  from the provided link and run:
 ```bash
 rosbag play --clock localization.bag
 ```
-After the data finishes playing, type `q`  and press Enter in the pop out window of  `localization.launch` to exit the program.
+![Localization Demo](pics/localization.gif)
+
+The green circles represent the current visible reflective markers. After the data finishes playing, type `q`  and press Enter in the pop out window of  `localization.launch` to exit the program.
 
 ---
+
+## Note
+
+If you are interested in the theory and derivation, please refer to RLML_derivation.pdf.
+About params, if your robot is publishing tf, set `preset_lidar_tf: false`, otherwise, set it to true and set your own robot calibration through
+`lidar_trans_x, lidar_trans_y` and `lidar_yaw`.
 
 ## TODO List
 
