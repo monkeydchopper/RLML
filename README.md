@@ -2,11 +2,13 @@
 
 ---
 
-This project uses **2D LiDAR and odometry**, with **reflector assistance**, to achieve **mapping and localization**.  
+This project utilizes **2D LiDAR and odometry** , with reflector assistance, to enable accurate **mapping and localization** .
 Key features of the project include:
-- **Mapping** based on LiDAR scans and reflectors
-- **Relocalization** using the generated map
-- **Real-time localization**, with **odometry smoothing** to provide a stable trajectory for more reliable control
+- **Mapping**  based on LiDAR scans and reflectors
+
+- **Relocalization**  using the generated map
+
+- **Real-time localization**  by combining LiDAR and odometry, providing precise and smooth state estimation for stable and reliable control
 
 
 ---
