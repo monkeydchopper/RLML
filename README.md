@@ -54,6 +54,7 @@ Download the **demo dataset**  from the provided link and run:
 rosbag play --clock mapping.bag
 ```
 ![Mapping Demo](pics/mapping.gif)
+
 The blue rectangles represent the reflective markers. Once the data finishes playing, type `s`  and press Enter in the pop out window of `mapping.launch` to save the map.
 
 
