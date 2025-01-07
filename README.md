@@ -6,9 +6,9 @@ This project utilizes **2D LiDAR and odometry** , with reflector assistance, to 
 Key features of the project include:
 - **Mapping**  based on LiDAR scans and reflectors
 
-- **Relocalization**  using the generated map
+- **Relocalization**  using the reflective markers on the saved map
 
-- **Real-time localization**  by combining LiDAR and odometry, providing precise and smooth state estimation for stable and reliable control
+- **Real-time localization**  by combining LiDAR, odometry and reflective markers, providing precise and smooth state estimation for stable and reliable control
 
 
 ---
