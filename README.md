@@ -76,7 +76,7 @@ The green circles represent the current visible reflective markers. After the da
 ## Note
 
 If you are interested in the theory and derivation, please refer to RLML_derivation.pdf.
-About params, if your robot is publishing tf, set `preset_lidar_tf: false`, otherwise, set it to true and set your own robot calibration through
+About params, if your robot is publishing tf between lidar sensor and odom, set `preset_lidar_tf: false`, otherwise, set it to true and set your own robot calibration through
 `lidar_trans_x, lidar_trans_y` and `lidar_yaw`.
 
 ## TODO List
