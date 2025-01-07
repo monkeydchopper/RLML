@@ -51,11 +51,11 @@ struct robotState
     {}
 };
 
-class fusionSlamRos
+class RLMLRos
 {
 public:
-    fusionSlamRos();
-    ~fusionSlamRos();
+    RLMLRos();
+    ~RLMLRos();
 
 private:
     void scanCallback(const sensor_msgs::LaserScanConstPtr& scan_msg, const nav_msgs::Odometry::ConstPtr& odom_msg);

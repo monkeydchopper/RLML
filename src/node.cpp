@@ -7,7 +7,7 @@ int main(int argc, char** argv)
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
 
 
-    fusionSlamRos mapper;
+    RLMLRos mapper;
 
     ros::spin();
     return 0;

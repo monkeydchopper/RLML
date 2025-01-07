@@ -1,7 +1,7 @@
 
 #include "RLML_ros.h"
 
-fusionSlamRos::fusionSlamRos() : got_lidar_tf_(false), initialize_(false),
+RLMLRos::RLMLRos() : got_lidar_tf_(false), initialize_(false),
 relocalize_(false),  tracking_succeed_(true), receive_first_lidar_(false),
 receive_first_odom_(false), publish_time_(0), check_lidar_time_(0), check_odom_time_(0)
 {
@@ -33,7 +33,7 @@ receive_first_odom_(false), publish_time_(0), check_lidar_time_(0), check_odom_t
     private_nh.param("relocalize_min_response", relocalize_min_response, 0.5f);
     private_nh.param("scan_min_dis", scan_min_dis_, 0.4f);
 
-    std::cout << "fusion slam 3.2.0" <<std::endl;
+    std::cout << "RLML 1.0" <<std::endl;
 
     if (preset_lidar_tf_)
     {
@@ -78,8 +78,8 @@ receive_first_odom_(false), publish_time_(0), check_lidar_time_(0), check_odom_t
     }
 
 
-    std::cout << "fusion slam 3.2.0" <<std::endl;
-    std::cerr << "fusion slam 3.2.0" <<std::endl;
+    std::cout << "RLML 1.0" <<std::endl;
+    std::cerr << "RLML 1.0" <<std::endl;
     publish_gap_ = 1. / pose_freq_;
 
     std::cout << "mapping mode: " << mapping_ << std::endl;
@@ -253,13 +253,13 @@ receive_first_odom_(false), publish_time_(0), check_lidar_time_(0), check_odom_t
     constraint_list_pub_ = nh.advertise<visualization_msgs::MarkerArray>("constraint_list", 1, true);
     landmarks_pub_ = nh.advertise<visualization_msgs::MarkerArray>( "landmarks", 1);
     cur_landmarks_pub_ = nh.advertise<visualization_msgs::MarkerArray>( "cur_landmarks", 1);
-    odom_sub_ = nh.subscribe(odom_topic, 10, &fusionSlamRos::odomCallback, this);
+    odom_sub_ = nh.subscribe(odom_topic, 10, &RLMLRos::odomCallback, this);
 
 
     lidar_subscriber_.subscribe(nh, scan_topic, 10);
     odom_subscriber_.subscribe(nh, odom_topic, 10);
     sync_.reset(new Sync(syncPolicy(20), lidar_subscriber_, odom_subscriber_));
-    sync_->registerCallback(std::bind(&fusionSlamRos::scanCallback, this, std::placeholders::_1, std::placeholders::_2));
+    sync_->registerCallback(std::bind(&RLMLRos::scanCallback, this, std::placeholders::_1, std::placeholders::_2));
     if(!mapping_)
     {
         std::cout << "publishing map, wait..." << std::endl;
@@ -268,24 +268,24 @@ receive_first_odom_(false), publish_time_(0), check_lidar_time_(0), check_odom_t
         publishPath();
         std::cout << "publishing map done..." << std::endl;
     }
-    publish_thread_ = std::make_shared<std::thread>(&fusionSlamRos::publishLoop, this);
+    publish_thread_ = std::make_shared<std::thread>(&RLMLRos::publishLoop, this);
 
 
     check_data_processing_time_ = std::chrono::steady_clock::now();
-    proc_th_ptr_ = std::make_shared<std::thread>(&fusionSlamRos::processData, this);
-    cmdThPtr_ = std::make_shared<std::thread>(&fusionSlamRos::cmdProcess, this);
+    proc_th_ptr_ = std::make_shared<std::thread>(&RLMLRos::processData, this);
+    cmdThPtr_ = std::make_shared<std::thread>(&RLMLRos::cmdProcess, this);
 
     if(use_publish_pose_thread_)
     {
-        poseThPtr_ = std::make_shared<std::thread>(&fusionSlamRos::publishPoseUpToDate, this);
+        poseThPtr_ = std::make_shared<std::thread>(&RLMLRos::publishPoseUpToDate, this);
     }
 
-    optimization_srv_ = nh.advertiseService("optimization", &fusionSlamRos::optimizationCallback, this);
+    optimization_srv_ = nh.advertiseService("optimization", &RLMLRos::optimizationCallback, this);
 
     setCorrelativeTranslationTable();
 }
 
-fusionSlamRos::~fusionSlamRos()
+RLMLRos::~RLMLRos()
 {
     fclose(stdout);
     cmdThPtr_->join();
@@ -300,7 +300,7 @@ fusionSlamRos::~fusionSlamRos()
     }
 }
 
-void fusionSlamRos::setCorrelativeTranslationTable()
+void RLMLRos::setCorrelativeTranslationTable()
 {
     correlative_translation_table_ = new char[256];
 
@@ -309,7 +309,7 @@ void fusionSlamRos::setCorrelativeTranslationTable()
     }
 }
 
-bool fusionSlamRos::optimizationCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+bool RLMLRos::optimizationCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
 {
     map_builder_.doPoseAdjustment();
     return true;
@@ -319,7 +319,7 @@ bool fusionSlamRos::optimizationCallback(std_srvs::Empty::Request& req, std_srvs
 
 
 
-void fusionSlamRos::scanCallback(const sensor_msgs::LaserScanConstPtr& scan_msg,
+void RLMLRos::scanCallback(const sensor_msgs::LaserScanConstPtr& scan_msg,
                                const nav_msgs::Odometry::ConstPtr& odom_msg)
 {
     if(receive_first_lidar_)
@@ -370,7 +370,7 @@ void fusionSlamRos::scanCallback(const sensor_msgs::LaserScanConstPtr& scan_msg,
 }
 
 
-void fusionSlamRos::odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg)
+void RLMLRos::odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg)
 {
     if(receive_first_odom_)
     {
@@ -391,7 +391,7 @@ void fusionSlamRos::odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg)
 
 
 
-void fusionSlamRos::processData()
+void RLMLRos::processData()
 {
     while (ros::ok())
     {
@@ -616,7 +616,7 @@ void fusionSlamRos::processData()
 
 
 
-void fusionSlamRos::cmdProcess()
+void RLMLRos::cmdProcess()
 {
 
     ros::Rate rate(100);
@@ -665,7 +665,7 @@ void fusionSlamRos::cmdProcess()
 
 
 
-void fusionSlamRos::publishPoseUpToDate()
+void RLMLRos::publishPoseUpToDate()
 {
 //    ros::Rate rate(pose_freq_);
 
@@ -775,7 +775,7 @@ void fusionSlamRos::publishPoseUpToDate()
     }
 }
 
-void fusionSlamRos::publishPath()
+void RLMLRos::publishPath()
 {
     std::vector<Eigen::Vector3f> path = map_builder_.getPath();
     nav_msgs::Path path_msg;
@@ -803,7 +803,7 @@ void fusionSlamRos::publishPath()
     path_pub_.publish(path_msg);
 }
 
-void fusionSlamRos::publishPose(const Eigen::Vector3f& pose, const ros::Time& stamp)
+void RLMLRos::publishPose(const Eigen::Vector3f& pose, const ros::Time& stamp)
 {
     geometry_msgs::PoseStamped pose_msg;
     pose_msg.header.stamp = stamp;
@@ -821,7 +821,7 @@ void fusionSlamRos::publishPose(const Eigen::Vector3f& pose, const ros::Time& st
     pose_pub_.publish(pose_msg);
 }
 
-void fusionSlamRos::publishOccupancyGridMap()
+void RLMLRos::publishOccupancyGridMap()
 {
     std::shared_ptr<RLML::OccupancyGridMap> map = map_builder_.getOccupancyGridMap();
 
@@ -851,7 +851,7 @@ void fusionSlamRos::publishOccupancyGridMap()
     map_pub_.publish(map_msg);
 }
 
-void fusionSlamRos::publishProbabilityGridMap()
+void RLMLRos::publishProbabilityGridMap()
 {
     std::shared_ptr<RLML::ProbabilityGridMap> map = map_builder_.getProbabilityGridMap();
 
@@ -882,7 +882,7 @@ void fusionSlamRos::publishProbabilityGridMap()
     map_pub_.publish(map_msg);
 }
 
-void fusionSlamRos::publishCorrelativeGrid()
+void RLMLRos::publishCorrelativeGrid()
 {  
     std::shared_ptr<RLML::CorrelativeGrid> correlative_grid = map_builder_.getCorrelativeGrid();
 
@@ -911,7 +911,7 @@ void fusionSlamRos::publishCorrelativeGrid()
     correlative_grid_pub_.publish(map_msg);
 }
 
-void fusionSlamRos::publishConstraintList()
+void RLMLRos::publishConstraintList()
 {
     std::vector<Eigen::Vector2f> graph_nodes;
     std::vector<std::pair<Eigen::Vector2f, Eigen::Vector2f>> graph_edges;
@@ -984,7 +984,7 @@ void fusionSlamRos::publishConstraintList()
 
 
 
-void fusionSlamRos::publishCurLandmarks(const ros::Time& stamp)
+void RLMLRos::publishCurLandmarks(const ros::Time& stamp)
 {
     visualization_msgs::MarkerArray markers;
     std::vector<Eigen::Vector2f> landmarks = map_builder_.getCurLandmarks();
@@ -1020,7 +1020,7 @@ void fusionSlamRos::publishCurLandmarks(const ros::Time& stamp)
 }
 
 
-void fusionSlamRos::publishAllLandmarks()
+void RLMLRos::publishAllLandmarks()
 {
     visualization_msgs::MarkerArray markers;
     std::vector<std::shared_ptr<RLML::LandMark>> landmarks = map_builder_.getLandmarks();
@@ -1058,7 +1058,7 @@ void fusionSlamRos::publishAllLandmarks()
 
 }
 
-void fusionSlamRos::publishLoop()
+void RLMLRos::publishLoop()
 {
     ros::Rate rate(publish_freq_);
 
@@ -1082,7 +1082,7 @@ void fusionSlamRos::publishLoop()
 }
 
 
-void fusionSlamRos::saveMap()
+void RLMLRos::saveMap()
 {
     map_builder_.updateLandmarks();
     map_builder_.doPoseAdjustment();
@@ -1092,14 +1092,14 @@ void fusionSlamRos::saveMap()
 
 
 
-void fusionSlamRos::updateMap()
+void RLMLRos::updateMap()
 {
     map_builder_.updateLandmarks();
     map_builder_.doPoseAdjustment();
 }
 
 
-void fusionSlamRos::saveOccupancyGridMap()
+void RLMLRos::saveOccupancyGridMap()
 {
     std::shared_ptr<RLML::OccupancyGridMap> map = map_builder_.getOccupancyGridMap();
 
@@ -1172,7 +1172,7 @@ free_thresh: 0.196
 
 
 template <typename Derived>
-void fusionSlamRos::loadCovariance(const ros::NodeHandle& nh, const std::string& cov_name, Eigen::DenseBase<Derived>& covariance)
+void RLMLRos::loadCovariance(const ros::NodeHandle& nh, const std::string& cov_name, Eigen::DenseBase<Derived>& covariance)
 {
     XmlRpc::XmlRpcValue covariance_config;
     nh.getParam(cov_name, covariance_config);
